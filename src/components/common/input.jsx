@@ -1,21 +1,13 @@
 import React from "react";
 
-function Input({ name, label, type, value, error, onChange }) {
+function Input({ name, label, error, ...rest }) {
   return (
     <div className="mb-3">
       <label htmlFor={name} className="form-label">
         {label}
       </label>
-      <input
-        autoFocus
-        value={value}
-        onChange={onChange}
-        type={type}
-        className="form-control"
-        id={name}
-        name={name}
-      />
-      {error && <div className="alert alert-danger mt-2">{ error}</div>}
+      <input {...rest} name={name} id={name} className="form-control" />
+      {error && <div className="alert alert-danger mt-2">{error}</div>}
     </div>
   );
 }

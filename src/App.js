@@ -8,6 +8,7 @@ import Customers from "./components/customers";
 import NotFound from "./components/notFound";
 import MovieForm from "./components/movieForm";
 import LoginForm from "./components/loginForm";
+import RegisterForm from "./components/registerForm";
 
 function App() {
   // const navigate = useNavigate(); 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/">
             <Route index element={"home"} />
             <Route path="login" element={<LoginForm />} />
+            <Route path="register" element={<RegisterForm />} />
             <Route path="movies">
               <Route index element={<Movies />} />
               <Route path=":id" element={<MovieForm />} />
