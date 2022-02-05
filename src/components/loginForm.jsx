@@ -1,4 +1,5 @@
 import React from "react";
+import Joi, { schema } from "joi-browser";
 import Input from "./common/input";
 
 function LoginForm() {
@@ -9,26 +10,31 @@ function LoginForm() {
 
   const [errors, setErrors] = React.useState({});
 
+  const schema = {
+    username: Joi.string().required().label("Username"),
+    password: Joi.string().required().label("Password"),
+  };
+
   function validate() {
+    const options = {
+      abortEarly: false,
+    };
+    const { error } = Joi.validate(account, schema, options);
+
+    if (!error) return null;
+
     const errors = {};
-
-    const { username, password } = account;
-
-    if (username.trim() === "") errors.username = "Username is required.";
-
-    if (password.trim() === "") errors.password = "Password is required.";
-
-    return Object.keys(errors).length === 0 ? null : errors;
+    for (const item of error.details) {
+      errors[item.path[0]] = item.message;
+    }
+    return errors;
   }
 
   function validateProperty(name, value) {
-    if (name === "username") {
-      if (value.trim() === "") return "Username is required.";
-    }
-
-    if (name === "password") {
-      if (value.trim() === "") return "Password is required.";
-    }
+    const obj = { [name]: value };
+    const propertySchema = { [name]: schema[name]}
+    const {error} = Joi.validate(obj, propertySchema)
+    return error ? error.details[0].message : null;
   }
 
   function handleSubmit(e) {
