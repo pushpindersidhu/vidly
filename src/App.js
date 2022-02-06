@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Movies from "./components/movies";
 import Navbar from "./components/Navbar";
@@ -11,7 +11,6 @@ import LoginForm from "./components/loginForm";
 import RegisterForm from "./components/registerForm";
 
 function App() {
-  // const navigate = useNavigate(); 
   return (
     <React.Fragment>
       <Navbar />
@@ -24,6 +23,7 @@ function App() {
             <Route path="movies">
               <Route index element={<Movies />} />
               <Route path=":id" element={<MovieForm />} />
+              <Route path="new" element={<MovieForm />} />
             </Route>
             <Route path="customers" element={<Customers />} />
             <Route path="rentals" element={<Rentals />} />
@@ -31,7 +31,6 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
-        {/* <Navigate from="/" to="/movies" /> */}
       </main>
     </React.Fragment>
   );

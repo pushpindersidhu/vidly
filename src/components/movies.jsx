@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { getMovies } from "../services/fakeMovieService";
+import { getMovies, deleteMovie } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 import Pagination from "./common/pagination";
 import paginate from "../utils/paginate";
@@ -28,6 +28,7 @@ class Movies extends Component {
 
   handleDelete = (movie) => {
     const movies = this.state.movies.filter((m) => m._id !== movie._id);
+    deleteMovie(movie._id);
     this.setState({ movies });
   };
 
@@ -62,15 +63,26 @@ class Movies extends Component {
       sortColumn,
     } = this.state;
 
-    if (count === 0) return <p>There are no movies in the database.</p>;
+    if (count === 0) return (
+      <p>
+        There are no movies in the database.{" "}
+        <Link className="btn btn-primary m-4" to="new">
+          New Movie
+        </Link>
+      </p>
+    );
 
     const { filtered, movies } = this.getPagedData();
 
     return (
-      <div className="row">
-        <Link to='/new'>New Movie</Link>
-        <p>Showing {filtered.length} movies in the database.</p>
-        <div className="col-3">
+      <div className="row mt-4">
+        <p className="text-center">
+          Showing {filtered.length} movies in the database.
+        </p>
+        <Link className="btn btn-primary m-4" to="new">
+          New Movie
+        </Link>
+        <div className="col-3 mt-4 pt-4">
           <ListGroup
             items={allGenres}
             selectedItem={selectedGenre}
