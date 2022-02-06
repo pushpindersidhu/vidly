@@ -7,6 +7,7 @@ import ListGroup from "./common/listGroup";
 import MoviesTable from "./moviesTable";
 import _ from "lodash";
 import { Link } from "react-router-dom";
+import SearchBox from "./common/searchBox";
 
 class Movies extends Component {
   state = {
@@ -15,6 +16,7 @@ class Movies extends Component {
     selectedGenre: null,
     pageSize: 4,
     currentPage: 1,
+    search: "",
     sortColumn: { path: "title", order: "asc" },
   };
 
@@ -45,11 +47,16 @@ class Movies extends Component {
   };
 
   handleGenreSelect = (genre) => {
-    this.setState({ selectedGenre: genre, currentPage: 1 });
+    this.setState({ selectedGenre: genre, currentPage: 1, search: "" });
   };
 
   handleSort = (sortColumn) => {
     this.setState({ sortColumn });
+  };
+
+  handleSearchChange = (e) => {
+    const { value } = e.target;
+    this.setState({ search: value, selectedGenre: null, currentPage: 1 });
   };
 
   render() {
@@ -61,27 +68,23 @@ class Movies extends Component {
       genres: allGenres,
       selectedGenre,
       sortColumn,
+      search,
     } = this.state;
 
-    if (count === 0) return (
-      <p>
-        There are no movies in the database.{" "}
-        <Link className="btn btn-primary m-4" to="new">
-          New Movie
-        </Link>
-      </p>
-    );
+    if (count === 0)
+      return (
+        <p>
+          There are no movies in the database.{" "}
+          <Link className="btn btn-primary m-4" to="new">
+            New Movie
+          </Link>
+        </p>
+      );
 
-    const { filtered, movies } = this.getPagedData();
+    const { searchFiltered: filtered, movies } = this.getPagedData();
 
     return (
       <div className="row mt-4">
-        <p className="text-center">
-          Showing {filtered.length} movies in the database.
-        </p>
-        <Link className="btn btn-primary m-4" to="new">
-          New Movie
-        </Link>
         <div className="col-3 mt-4 pt-4">
           <ListGroup
             items={allGenres}
@@ -89,7 +92,12 @@ class Movies extends Component {
             onItemSelect={this.handleGenreSelect}
           />
         </div>
-        <div className="col">
+        <div className="col mt-4 pt-4">
+          <Link className="btn btn-primary mb-2" to="new">
+            New Movie
+          </Link>
+          <p>Showing {filtered.length} movies in the database.</p>
+          <SearchBox value={search} onChange={this.handleSearchChange} />
           <MoviesTable
             movies={movies}
             onDelete={this.handleDelete}
@@ -115,6 +123,7 @@ class Movies extends Component {
       movies: allMovies,
       selectedGenre,
       sortColumn,
+      search,
     } = this.state;
 
     const filtered =
@@ -122,10 +131,18 @@ class Movies extends Component {
         ? allMovies.filter((movie) => movie.genre._id === selectedGenre._id)
         : allMovies;
 
-    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+    const searchFiltered = filtered.filter(
+      (movie) => movie.title.toLowerCase().indexOf(search.toLowerCase()) > -1
+    );
+
+    const sorted = _.orderBy(
+      searchFiltered,
+      [sortColumn.path],
+      [sortColumn.order]
+    );
 
     const movies = paginate(sorted, currentPage, pageSize);
-    return { filtered, movies };
+    return { searchFiltered, movies };
   };
 }
 
